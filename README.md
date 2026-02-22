@@ -12,8 +12,8 @@
 [![Code style: Ruff](https://img.shields.io/badge/code%20formatting-ruff-f5a623.svg?style=for-the-badge)](https://github.com/astral-sh/ruff)
 [![Logging: Loguru](https://img.shields.io/badge/logging-loguru-4ecdc4.svg?style=for-the-badge)](https://github.com/Delgan/loguru)
 
-A lightweight proxy server that translates Claude Code's Anthropic API calls into **NVIDIA NIM**, **OpenRouter**, or **LM Studio** format.
-Get **40 free requests/min** on NVIDIA NIM, access **hundreds of models** on OpenRouter, or run **fully local** with LM Studio.
+A lightweight proxy server that translates Claude Code's Anthropic API calls into **NVIDIA NIM**, **OpenRouter**, **LM Studio**, or **Chutes AI** format.
+Get **40 free requests/min** on NVIDIA NIM, access **hundreds of models** on OpenRouter, run **fully local** with LM Studio, or use **Chutes AI** for free decentralized inference.
 
 [Features](#features) · [Quick Start](#quick-start) · [How It Works](#how-it-works) · [Discord Bot](#discord-bot) · [Configuration](#configuration)
 
@@ -32,7 +32,7 @@ Get **40 free requests/min** on NVIDIA NIM, access **hundreds of models** on Ope
 |---------|-------------|
 | **Zero Cost** | 40 req/min free on NVIDIA NIM. Free models on OpenRouter. Fully local with LM Studio |
 | **Drop-in Replacement** | Set 2 env vars — no modifications to Claude Code CLI or VSCode extension needed |
-| **3 Providers** | NVIDIA NIM, OpenRouter (hundreds of models), LM Studio (local & offline) |
+| **4 Providers** | NVIDIA NIM, OpenRouter (hundreds of models), LM Studio (local & offline), Chutes AI (cheap decentralized) |
 | **Thinking Token Support** | Parses `<think>` tags and `reasoning_content` into native Claude thinking blocks |
 | **Heuristic Tool Parser** | Models outputting tool calls as text are auto-parsed into structured tool use |
 | **Request Optimization** | 5 categories of trivial API calls intercepted locally — saves quota and latency |
@@ -49,6 +49,7 @@ Get **40 free requests/min** on NVIDIA NIM, access **hundreds of models** on Ope
    - **NVIDIA NIM**: [build.nvidia.com/settings/api-keys](https://build.nvidia.com/settings/api-keys)
    - **OpenRouter**: [openrouter.ai/keys](https://openrouter.ai/keys)
    - **LM Studio**: No API key needed — run locally with [LM Studio](https://lmstudio.ai)
+   - **Chutes AI**: [chutes.ai/profile/api-tokens](https://chutes.ai/profile/api-tokens)
 2. Install [Claude Code](https://github.com/anthropics/claude-code)
 3. Install [uv](https://github.com/astral-sh/uv)
 
@@ -87,6 +88,16 @@ MODEL=open_router/stepfun/step-3.5-flash:free
 
 ```dotenv
 MODEL=lmstudio/lmstudio-community/qwen2.5-7b-instruct
+```
+
+</details>
+
+<details>
+<summary><b>Chutes AI</b> (cheap decentralized inference)</summary>
+
+```dotenv
+CHUTES_API_KEY=cpk-your-key-here
+MODEL=chutes/MiniMaxAI/MiniMax-M2.5-TEE
 ```
 
 </details>
@@ -165,7 +176,7 @@ To switch back to Anthropic models, comment out the added block and reload exten
 ```
 ┌─────────────────┐        ┌──────────────────────┐        ┌──────────────────┐
 │  Claude Code    │───────>│  Free Claude Code    │───────>│  LLM Provider    │
-│  CLI / VSCode   │<───────│  Proxy (:8082)       │<───────│  NIM / OR / LMS  │
+│  CLI / VSCode   │<───────│  Proxy (:8082)       │<───────│  NIM/OR/LMS/CHT  │
 └─────────────────┘        └──────────────────────┘        └──────────────────┘
    Anthropic API                     │                       OpenAI-compatible
    format (SSE)              ┌───────┴────────┐                format (SSE)
@@ -193,6 +204,7 @@ To switch back to Anthropic models, comment out the added block and reload exten
 | **NVIDIA NIM** | Free | 40 req/min | Kimi K2, GLM5, Devstral, MiniMax | Daily driver — generous free tier |
 | **OpenRouter** | Free / Paid | Varies | 200+ (GPT-4o, Claude, Step, etc.) | Model variety, fallback options |
 | **LM Studio** | Free (local) | Unlimited | Any GGUF model | Privacy, offline use, no rate limits |
+| **Chutes AI** | Paid | Varies | 80+ open models (DeepSeek, Llama, Qwen…) | Decentralized Bittensor inference |
 
 Switch providers by changing `MODEL` in `.env` — use the prefix format `provider/model/name`. Invalid prefix causes an error.
 
@@ -201,6 +213,7 @@ Switch providers by changing `MODEL` in `.env` — use the prefix format `provid
 | NVIDIA NIM | `nvidia_nim/...` | `NVIDIA_NIM_API_KEY` | `integrate.api.nvidia.com/v1` |
 | OpenRouter | `open_router/...` | `OPENROUTER_API_KEY` | `openrouter.ai/api/v1` |
 | LM Studio | `lmstudio/...` | (none) | `localhost:1234/v1` |
+| Chutes AI | `chutes/...` | `CHUTES_API_KEY` | `llm.chutes.ai/v1` |
 
 OpenRouter gives access to hundreds of models (StepFun, OpenAI, Anthropic, etc.) through a single API. Set `MODEL` to any OpenRouter model ID.
 
@@ -334,6 +347,22 @@ Browse: [model.lmstudio.ai](https://model.lmstudio.ai)
 
 </details>
 
+<details>
+<summary><b>Chutes AI</b></summary>
+
+Decentralized inference powered by [Bittensor](https://bittensor.com). Get an API key at [chutes.ai/app/api](https://chutes.ai/app/api).
+
+Popular models:
+- `Qwen/Qwen3-32B`
+- `deepseek-ai/DeepSeek-V3-0324-TEE`
+- `zai-org/GLM-5-TEE`
+- `moonshotai/Kimi-K2.5-TEE`
+- `MiniMaxAI/MiniMax-M2.5-TEE`
+
+Browse: [chutes.ai/app?type=llm](https://chutes.ai/app?type=llm)
+
+</details>
+
 ---
 
 ## Configuration
@@ -343,6 +372,7 @@ Browse: [model.lmstudio.ai](https://model.lmstudio.ai)
 | `MODEL` | Model to use (prefix format: `provider/model/name`; invalid prefix causes error) | `nvidia_nim/stepfun-ai/step-3.5-flash` |
 | `NVIDIA_NIM_API_KEY` | NVIDIA API key (NIM provider) | required |
 | `OPENROUTER_API_KEY` | OpenRouter API key (OpenRouter provider) | required |
+| `CHUTES_API_KEY` | Chutes AI API key (Chutes provider) | required |
 | `LM_STUDIO_BASE_URL` | LM Studio server URL | `http://localhost:1234/v1` |
 | `PROVIDER_RATE_LIMIT` | LLM API requests per window | `40` |
 | `PROVIDER_RATE_WINDOW` | Rate limit window (seconds) | `60` |
