@@ -89,14 +89,36 @@ def get_provider() -> BaseProvider:
             )
             _provider = LMStudioProvider(config)
             logger.info("Provider initialized: %s", settings.provider_type)
+        elif settings.provider_type == "chutes":
+            if not settings.chutes_api_key or not settings.chutes_api_key.strip():
+                raise HTTPException(
+                    status_code=503,
+                    detail=(
+                        "CHUTES_API_KEY is not set. Add it to your .env file. "
+                        "Get a key at https://chutes.ai/app/api"
+                    ),
+                )
+            from providers.chutes import ChutesProvider
+
+            config = ProviderConfig(
+                api_key=settings.chutes_api_key,
+                rate_limit=settings.provider_rate_limit,
+                rate_window=settings.provider_rate_window,
+                max_concurrency=settings.provider_max_concurrency,
+                http_read_timeout=settings.http_read_timeout,
+                http_write_timeout=settings.http_write_timeout,
+                http_connect_timeout=settings.http_connect_timeout,
+            )
+            _provider = ChutesProvider(config)
+            logger.info("Provider initialized: %s", settings.provider_type)
         else:
             logger.error(
-                "Unknown provider_type: '%s'. Supported: 'nvidia_nim', 'open_router', 'lmstudio'",
+                "Unknown provider_type: '%s'. Supported: 'nvidia_nim', 'open_router', 'lmstudio', 'chutes'",
                 settings.provider_type,
             )
             raise ValueError(
                 f"Unknown provider_type: '{settings.provider_type}'. "
-                f"Supported: 'nvidia_nim', 'open_router', 'lmstudio'"
+                f"Supported: 'nvidia_nim', 'open_router', 'lmstudio', 'chutes'"
             )
     return _provider
 

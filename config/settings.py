@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     # ==================== OpenRouter Config ====================
     open_router_api_key: str = Field(default="", validation_alias="OPENROUTER_API_KEY")
 
+    # ==================== Chutes AI Config ====================
+    chutes_api_key: str = Field(default="", validation_alias="CHUTES_API_KEY")
+
     # ==================== Messaging Platform Selection ====================
     # Valid: "telegram" | "discord"
     messaging_platform: str = Field(
@@ -124,7 +127,7 @@ class Settings(BaseSettings):
     @field_validator("model")
     @classmethod
     def validate_model_format(cls, v: str) -> str:
-        valid_providers = ("nvidia_nim", "open_router", "lmstudio")
+        valid_providers = ("nvidia_nim", "open_router", "lmstudio", "chutes")
         if "/" not in v:
             raise ValueError(
                 f"Model must be prefixed with provider type. "
@@ -135,7 +138,7 @@ class Settings(BaseSettings):
         if provider not in valid_providers:
             raise ValueError(
                 f"Invalid provider: '{provider}'. "
-                f"Supported: 'nvidia_nim', 'open_router', 'lmstudio'"
+                f"Supported: 'nvidia_nim', 'open_router', 'lmstudio', 'chutes'"
             )
         return v
 

@@ -1,6 +1,7 @@
 """Providers package - implement your own provider by extending BaseProvider."""
 
 from .base import BaseProvider, ProviderConfig
+from .chutes import ChutesProvider
 from .exceptions import (
     APIError,
     AuthenticationError,
@@ -17,6 +18,7 @@ __all__ = [
     "APIError",
     "AuthenticationError",
     "BaseProvider",
+    "ChutesProvider",
     "InvalidRequestError",
     "LMStudioProvider",
     "NvidiaNimProvider",
